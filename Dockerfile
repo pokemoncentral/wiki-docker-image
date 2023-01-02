@@ -1,6 +1,8 @@
 FROM mediawiki:1.39-fpm
 
-ENV MEDIAWIKI_BRANCH REL1_39
+ENV MEDIAWIKI_BRANCH=REL1_39 \
+    COMPOSER_NO_DEV=1 \
+    COMPOSER_NO_INTERACTION=1
 
 RUN apt update \
     && apt install -y librsvg2-dev
@@ -75,5 +77,8 @@ RUN git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediaw
     && git clone --depth 1 https://github.com/edwardspec/mediawiki-aws-s3.git AWS
 
 WORKDIR /var/www/html
+
+RUN mv composer.local.json-sample composer.local.json \
+    && composer update
 
 CMD ["php-fpm"]
