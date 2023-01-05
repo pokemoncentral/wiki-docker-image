@@ -79,7 +79,7 @@ RUN git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediaw
     # non-mediawiki stuff
     && git clone --depth 1 https://github.com/edwardspec/mediawiki-aws-s3.git AWS
 
-RUN chmod a+rw extensions/Widgets/compiled_templates
+RUN chmod a+rw Widgets/compiled_templates
 
 WORKDIR /var/www/html
 
