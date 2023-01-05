@@ -15,9 +15,9 @@ RUN curl -sSL https://github.com/mlocati/docker-php-extension-installer/releases
     luasandbox \
     redis \
     @composer
-    
+
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
-    && echo 'memory_limit = 256M' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini;
+    && echo 'memory_limit = 256M' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini
 
 WORKDIR /var/www/html/extensions
 
@@ -78,6 +78,8 @@ RUN git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediaw
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-WikiEditor.git WikiEditor \
     # non-mediawiki stuff
     && git clone --depth 1 https://github.com/edwardspec/mediawiki-aws-s3.git AWS
+
+RUN chmod a+rw extensions/Widgets/compiled_templates
 
 WORKDIR /var/www/html
 
