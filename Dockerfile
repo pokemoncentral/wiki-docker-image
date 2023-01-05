@@ -4,6 +4,7 @@ ENV MEDIAWIKI_BRANCH=REL1_39 \
     COMPOSER_NO_DEV=1 \
     COMPOSER_NO_INTERACTION=1
 
+# SVG resizing dependency
 RUN apt update \
     && apt install -y librsvg2-dev
 
@@ -24,7 +25,8 @@ WORKDIR /var/www/html/extensions
 # Remove default extensions
 RUN rm -rf *
 
-RUN git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-BetaFeatures.git BetaFeatures \
+RUN git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-AdvancedSearch.git AdvancedSearch \
+    && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-BetaFeatures.git BetaFeatures \
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-Capiunto.git Capiunto \
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-CategoryTree.git CategoryTree \
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-CharInsert.git CharInsert \
