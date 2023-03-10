@@ -1,4 +1,4 @@
-FROM mediawiki:1.39-fpm
+FROM mediawiki:1.39.2-fpm
 
 ENV MEDIAWIKI_BRANCH=REL1_39 \
     COMPOSER_NO_DEV=1 \
