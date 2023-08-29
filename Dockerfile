@@ -87,6 +87,8 @@ RUN chown -R www-data:www-data .
 
 WORKDIR /var/www/html
 
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
 RUN mv composer.local.json-sample composer.local.json \
     && composer update \
     && composer require wikimedia/html-formatter:4.0.3
