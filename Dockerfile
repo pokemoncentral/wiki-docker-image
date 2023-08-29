@@ -89,6 +89,6 @@ WORKDIR /var/www/html
 
 RUN mv composer.local.json-sample composer.local.json \
     && composer update
-    && COMPOSER_ALLOW_SUPERUSER=1 composer require wikimedia/html-formatter:4.0.3
+    && composer require wikimedia/html-formatter:4.0.3
 
 CMD ["php-fpm"]
