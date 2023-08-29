@@ -38,6 +38,7 @@ RUN git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediaw
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-CodeMirror.git CodeMirror \
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-ConfirmEdit.git ConfirmEdit \
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-Disambiguator.git Disambiguator \
+    && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-DiscussionTools.git DiscussionTools \
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-Echo.git Echo \
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-Elastica.git Elastica \
     # && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-FlexboxStyles.git FlexboxStyles \
@@ -47,6 +48,7 @@ RUN git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediaw
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-InputBox.git InputBox \
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-Interwiki.git Interwiki \
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-LocalisationUpdate.git LocalisationUpdate \
+    && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-Linter.git Linter \
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-Math.git Math \
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-MobileFrontend.git MobileFrontend \
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-MultimediaViewer.git MultimediaViewer \
@@ -87,5 +89,6 @@ WORKDIR /var/www/html
 
 RUN mv composer.local.json-sample composer.local.json \
     && composer update
+    && COMPOSER_ALLOW_SUPERUSER=1 composer require wikimedia/html-formatter:4.0.3
 
 CMD ["php-fpm"]
