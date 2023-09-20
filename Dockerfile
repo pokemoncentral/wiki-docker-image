@@ -6,7 +6,9 @@ ENV MEDIAWIKI_BRANCH=REL1_39 \
 
 # SVG resizing dependency
 RUN apt update \
-    && apt install -y librsvg2-dev
+    && apt install -y librsvg2-dev ffmpeg \
+    && apt clean \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN curl -sSL https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions -o - | sh -s \
     exif \
@@ -72,6 +74,7 @@ RUN git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediaw
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-TemplateSandbox.git TemplateSandbox \
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-TextExtracts.git TextExtracts \
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-Thanks.git Thanks \
+    && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-TimedMediaHandler.git TimedMediaHandler \
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-TitleBlacklist.git TitleBlacklist \
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-TitleKey.git TitleKey \
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-TwitterCards.git TwitterCards \
