@@ -1,4 +1,4 @@
-FROM mediawiki:1.43.0-fpm
+FROM mediawiki:1.43.1-fpm
 
 ENV MEDIAWIKI_BRANCH=REL1_43 \
     COMPOSER_NO_DEV=1 \
