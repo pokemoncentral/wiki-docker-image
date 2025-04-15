@@ -19,8 +19,8 @@ RUN curl -sSL https://github.com/mlocati/docker-php-extension-installer/releases
     redis \
     @composer
 
-RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
-    && echo 'memory_limit = 256M' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+COPY docker-php.ini /usr/local/etc/php/conf.d
 
 WORKDIR /var/www/html/extensions
 
