@@ -6,7 +6,7 @@ ENV MEDIAWIKI_BRANCH=REL1_43 \
 
 # SVG resizing dependency
 RUN apt update \
-    && apt install -y librsvg2-dev ffmpeg \
+    && apt install -y ffmpeg librsvg2-dev libvips-tools \
     && apt clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -84,7 +84,8 @@ RUN git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediaw
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-WikiEditor.git WikiEditor \
     # non-mediawiki stuff
     && git clone --depth 1 https://github.com/edwardspec/mediawiki-aws-s3.git AWS \
-    && git clone --depth 1 https://github.com/StarCitizenWiki/mediawiki-extensions-EmbedVideo.git EmbedVideo
+    && git clone --depth 1 https://github.com/StarCitizenWiki/mediawiki-extensions-EmbedVideo.git EmbedVideo \
+    && git clone --depth 1 https://github.com/StarCitizenTools/mediawiki-extensions-Thumbro.git Thumbro
 
 RUN chown -R www-data:www-data .
 
