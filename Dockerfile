@@ -16,6 +16,7 @@ RUN curl -sSL https://github.com/mlocati/docker-php-extension-installer/releases
     gd \
     imagick \
     luasandbox \
+    pcntl \
     redis \
     @composer
 
