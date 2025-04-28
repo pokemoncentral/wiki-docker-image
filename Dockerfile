@@ -4,8 +4,8 @@ ENV MEDIAWIKI_BRANCH=REL1_43 \
     COMPOSER_NO_DEV=1 \
     COMPOSER_NO_INTERACTION=1
 
-# SVG resizing dependency
 RUN apt update \
+    && apt upgrade -y \
     && apt install -y ffmpeg librsvg2-dev libvips-tools \
     && apt clean \
     && rm -rf /var/lib/apt/lists/*
@@ -18,6 +18,7 @@ RUN curl -sSL https://github.com/mlocati/docker-php-extension-installer/releases
     luasandbox \
     pcntl \
     redis \
+    wikidiff2 \
     @composer
 
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
@@ -85,7 +86,6 @@ RUN git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediaw
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-WikiEditor.git WikiEditor \
     # non-mediawiki stuff
     && git clone --depth 1 https://github.com/edwardspec/mediawiki-aws-s3.git AWS \
-    && git clone --depth 1 https://github.com/pokemoncentral/mediawiki-extensions-FontOverride.git FontOverride \
     && git clone --depth 1 https://github.com/StarCitizenWiki/mediawiki-extensions-EmbedVideo.git EmbedVideo \
     && git clone --depth 1 https://github.com/StarCitizenTools/mediawiki-extensions-Thumbro.git Thumbro
 
