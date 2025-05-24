@@ -89,6 +89,7 @@ RUN git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediaw
     # non-mediawiki stuff
     && git clone --depth 1 https://github.com/edwardspec/mediawiki-aws-s3.git AWS \
     && git clone --depth 1 https://github.com/StarCitizenWiki/mediawiki-extensions-EmbedVideo.git EmbedVideo \
+    && git clone --depth 1 https://github.com/pokemoncentral/mediawiki-extensions-Slug.git Slug \
     && git clone --depth 1 https://github.com/StarCitizenTools/mediawiki-extensions-Thumbro.git Thumbro
 
 RUN chown -R www-data:www-data .
