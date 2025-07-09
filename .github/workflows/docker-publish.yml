@@ -52,6 +52,7 @@ jobs:
           push: false
           load: true
           tags: mediawiki-php84:1.43-fpm
+          provenance: false
 
       - name: Build and push Docker image for amd64
         id: build
@@ -64,6 +65,7 @@ jobs:
             BASE_IMAGE=mediawiki-php84:1.43-fpm
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          provenance: false
 
   build-arm64:
     name: Build arm64
@@ -107,6 +109,7 @@ jobs:
           push: false
           load: true
           tags: mediawiki-php84:1.43-fpm
+          provenance: false
 
       - name: Build and push Docker image for arm64
         id: build
@@ -119,6 +122,7 @@ jobs:
             BASE_IMAGE=mediawiki-php84:1.43-fpm
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          provenance: false
 
   merge:
     name: Create and push multi-arch manifest
