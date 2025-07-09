@@ -38,6 +38,21 @@ jobs:
             type=ref,event=tag
             type=raw,value=latest
 
+      - name: Download and modify MediaWiki Dockerfile
+        run: |
+          curl -o Dockerfile.mediawiki https://raw.githubusercontent.com/wikimedia/mediawiki-docker/refs/heads/main/1.43/fpm/Dockerfile
+          sed -i 's/FROM php:8\.[0-9]\+-fpm/FROM php:8.4-fpm/' Dockerfile.mediawiki
+
+      - name: Build MediaWiki base with PHP 8.4
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.mediawiki
+          platforms: linux/amd64
+          push: false
+          load: true
+          tags: mediawiki-php84:1.43-fpm
+
       - name: Build and push Docker image for amd64
         id: build
         uses: docker/build-push-action@v6
@@ -45,6 +60,8 @@ jobs:
           context: .
           platforms: linux/amd64
           push: true
+          build-args: |
+            BASE_IMAGE=mediawiki-php84:1.43-fpm
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -76,6 +93,21 @@ jobs:
             type=ref,event=tag
             type=raw,value=latest
 
+      - name: Download and modify MediaWiki Dockerfile
+        run: |
+          curl -o Dockerfile.mediawiki https://raw.githubusercontent.com/wikimedia/mediawiki-docker/refs/heads/main/1.43/fpm/Dockerfile
+          sed -i 's/FROM php:8\.[0-9]\+-fpm/FROM php:8.4-fpm/' Dockerfile.mediawiki
+
+      - name: Build MediaWiki base with PHP 8.4
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.mediawiki
+          platforms: linux/arm64
+          push: false
+          load: true
+          tags: mediawiki-php84:1.43-fpm
+
       - name: Build and push Docker image for arm64
         id: build
         uses: docker/build-push-action@v6
@@ -83,6 +115,8 @@ jobs:
           context: .
           platforms: linux/arm64
           push: true
+          build-args: |
+            BASE_IMAGE=mediawiki-php84:1.43-fpm
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
