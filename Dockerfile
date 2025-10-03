@@ -1,4 +1,4 @@
-ARG MEDIAWIKI_VERSION=1.43.3
+ARG MEDIAWIKI_VERSION=1.43.4
 ARG BASE_IMAGE=mediawiki:1.43-fpm
 FROM ${BASE_IMAGE}
 
@@ -97,10 +97,6 @@ RUN git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediaw
 RUN chown -R www-data:www-data .
 
 WORKDIR /var/www/html
-
-# Apply patch
-COPY 82648f1.diff /tmp/
-RUN patch -p1 < /tmp/82648f1.diff && rm /tmp/82648f1.diff
 
 RUN mv composer.local.json-sample composer.local.json \
     && composer update
