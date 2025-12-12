@@ -8,6 +8,10 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  PHP_VERSION: "8.5"
+  MEDIAWIKI_MAJOR_VERSION: "1.43"
+  MEDIAWIKI_VERSION: "1.43.6"
+  MEDIAWIKI_BRANCH: "REL1_43"
 
 jobs:
   build-amd64:
@@ -47,8 +51,9 @@ jobs:
 
       - name: Download and modify MediaWiki Dockerfile
         run: |
-          curl -o Dockerfile.mediawiki https://raw.githubusercontent.com/wikimedia/mediawiki-docker/refs/heads/main/1.43/fpm/Dockerfile
-          sed -i 's/FROM php:8\.[0-9]\+-fpm/FROM php:8.4-fpm/' Dockerfile.mediawiki
+          curl -o Dockerfile.mediawiki https://raw.githubusercontent.com/wikimedia/mediawiki-docker/refs/heads/main/${{ env.MEDIAWIKI_MAJOR_VERSION }}/fpm/Dockerfile
+          sed -i 's/FROM php:8\.[0-9]\+-fpm/FROM php:${{ env.PHP_VERSION }}-fpm/' Dockerfile.mediawiki
+          sed -i 's/MEDIAWIKI_VERSION=.*/MEDIAWIKI_VERSION=${{ env.MEDIAWIKI_VERSION }}/' Dockerfile.mediawiki
 
       - name: Build and push MediaWiki base to local registry
         uses: docker/build-push-action@v6
@@ -57,7 +62,7 @@ jobs:
           file: Dockerfile.mediawiki
           platforms: linux/amd64
           push: true
-          tags: localhost:5000/mediawiki-php84:1.43-fpm
+          tags: localhost:5000/mediawiki-php${{ env.PHP_VERSION }}:${{ env.MEDIAWIKI_MAJOR_VERSION }}-fpm
 
       - name: Build and push Docker image for amd64
         id: build
@@ -67,7 +72,8 @@ jobs:
           platforms: linux/amd64
           push: true
           build-args: |
-            BASE_IMAGE=localhost:5000/mediawiki-php84:1.43-fpm
+            BASE_IMAGE=localhost:5000/mediawiki-php${{ env.PHP_VERSION }}:${{ env.MEDIAWIKI_MAJOR_VERSION }}-fpm
+            MEDIAWIKI_BRANCH=${{ env.MEDIAWIKI_BRANCH }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -108,8 +114,9 @@ jobs:
 
       - name: Download and modify MediaWiki Dockerfile
         run: |
-          curl -o Dockerfile.mediawiki https://raw.githubusercontent.com/wikimedia/mediawiki-docker/refs/heads/main/1.43/fpm/Dockerfile
-          sed -i 's/FROM php:8\.[0-9]\+-fpm/FROM php:8.4-fpm/' Dockerfile.mediawiki
+          curl -o Dockerfile.mediawiki https://raw.githubusercontent.com/wikimedia/mediawiki-docker/refs/heads/main/${{ env.MEDIAWIKI_MAJOR_VERSION }}/fpm/Dockerfile
+          sed -i 's/FROM php:8\.[0-9]\+-fpm/FROM php:${{ env.PHP_VERSION }}-fpm/' Dockerfile.mediawiki
+          sed -i 's/MEDIAWIKI_VERSION=.*/MEDIAWIKI_VERSION=${{ env.MEDIAWIKI_VERSION }}/' Dockerfile.mediawiki
 
       - name: Build and push MediaWiki base to local registry
         uses: docker/build-push-action@v6
@@ -118,7 +125,7 @@ jobs:
           file: Dockerfile.mediawiki
           platforms: linux/arm64
           push: true
-          tags: localhost:5000/mediawiki-php84:1.43-fpm
+          tags: localhost:5000/mediawiki-php${{ env.PHP_VERSION }}:${{ env.MEDIAWIKI_MAJOR_VERSION }}-fpm
 
       - name: Build and push Docker image for arm64
         id: build
@@ -128,7 +135,8 @@ jobs:
           platforms: linux/arm64
           push: true
           build-args: |
-            BASE_IMAGE=localhost:5000/mediawiki-php84:1.43-fpm
+            BASE_IMAGE=localhost:5000/mediawiki-php${{ env.PHP_VERSION }}:${{ env.MEDIAWIKI_MAJOR_VERSION }}-fpm
+            MEDIAWIKI_BRANCH=${{ env.MEDIAWIKI_BRANCH }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
