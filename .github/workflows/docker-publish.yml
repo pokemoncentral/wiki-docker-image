@@ -54,6 +54,9 @@ jobs:
           curl -o Dockerfile.mediawiki https://raw.githubusercontent.com/wikimedia/mediawiki-docker/refs/heads/main/${{ env.MEDIAWIKI_MAJOR_VERSION }}/fpm/Dockerfile
           sed -i 's/FROM php:8\.[0-9]\+-fpm/FROM php:${{ env.PHP_VERSION }}-fpm/' Dockerfile.mediawiki
           sed -i 's/MEDIAWIKI_VERSION=.*/MEDIAWIKI_VERSION=${{ env.MEDIAWIKI_VERSION }}/' Dockerfile.mediawiki
+          # Remove version pins from PECL extensions for PHP 8.5 compatibility
+          sed -i 's/APCu-[0-9.]\+/APCu/' Dockerfile.mediawiki
+          sed -i 's/LuaSandbox-[0-9.]\+/LuaSandbox/' Dockerfile.mediawiki
 
       - name: Build and push MediaWiki base to local registry
         uses: docker/build-push-action@v6
@@ -117,6 +120,9 @@ jobs:
           curl -o Dockerfile.mediawiki https://raw.githubusercontent.com/wikimedia/mediawiki-docker/refs/heads/main/${{ env.MEDIAWIKI_MAJOR_VERSION }}/fpm/Dockerfile
           sed -i 's/FROM php:8\.[0-9]\+-fpm/FROM php:${{ env.PHP_VERSION }}-fpm/' Dockerfile.mediawiki
           sed -i 's/MEDIAWIKI_VERSION=.*/MEDIAWIKI_VERSION=${{ env.MEDIAWIKI_VERSION }}/' Dockerfile.mediawiki
+          # Remove version pins from PECL extensions for PHP 8.5 compatibility
+          sed -i 's/APCu-[0-9.]\+/APCu/' Dockerfile.mediawiki
+          sed -i 's/LuaSandbox-[0-9.]\+/LuaSandbox/' Dockerfile.mediawiki
 
       - name: Build and push MediaWiki base to local registry
         uses: docker/build-push-action@v6
