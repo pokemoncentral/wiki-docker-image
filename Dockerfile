@@ -29,7 +29,10 @@ COPY docker-php.ini /usr/local/etc/php/conf.d
 WORKDIR /var/www/html/extensions
 
 # Remove default extensions
-RUN rm -rf *
+RUN rm -rf * \
+    && chown www-data:www-data .
+
+USER www-data
 
 RUN git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-AdvancedSearch.git AdvancedSearch \
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-BetaFeatures.git BetaFeatures \
@@ -94,11 +97,11 @@ RUN git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediaw
     && git clone --depth 1 https://github.com/pokemoncentral/mediawiki-extensions-Slug.git Slug \
     && git clone --depth 1 https://github.com/StarCitizenTools/mediawiki-extensions-Thumbro.git Thumbro
 
-RUN chown -R www-data:www-data .
-
 WORKDIR /var/www/html
 
 RUN mv composer.local.json-sample composer.local.json \
+    # TODO: remove this in the next version
+    && composer config audit.block-insecure false \
     && composer update
 
 CMD ["php-fpm"]
