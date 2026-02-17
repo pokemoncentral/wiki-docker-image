@@ -103,7 +103,6 @@ WORKDIR /var/www/html
 
 RUN mv composer.local.json-sample composer.local.json \
     # TODO: remove this in the next version
-    && composer config audit.block-insecure false \
-    && composer update
+    && COMPOSER_NO_SECURITY_BLOCKING=1 composer update
 
 CMD ["php-fpm"]
