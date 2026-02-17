@@ -97,6 +97,8 @@ RUN git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediaw
     && git clone --depth 1 https://github.com/pokemoncentral/mediawiki-extensions-Slug.git Slug \
     && git clone --depth 1 https://github.com/StarCitizenTools/mediawiki-extensions-Thumbro.git Thumbro
 
+USER root
+
 WORKDIR /var/www/html
 
 RUN mv composer.local.json-sample composer.local.json \
