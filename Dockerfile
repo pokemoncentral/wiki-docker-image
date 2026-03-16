@@ -102,7 +102,6 @@ USER root
 WORKDIR /var/www/html
 
 RUN mv composer.local.json-sample composer.local.json \
-    # TODO: remove this in the next version
-    && COMPOSER_NO_SECURITY_BLOCKING=1 composer update
+    && composer update
 
 CMD ["php-fpm"]
