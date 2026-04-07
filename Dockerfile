@@ -101,9 +101,7 @@ USER root
 
 WORKDIR /var/www/html
 
-RUN mv composer.local.json-sample composer.local.json \
-    # TODO: remove this in the next version
-    && COMPOSER_NO_SECURITY_BLOCKING=1 composer update \
-    && composer require sentry/sentry
+COPY composer.local.json .
+RUN COMPOSER_NO_SECURITY_BLOCKING=1 composer update
 
 CMD ["php-fpm"]

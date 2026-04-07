@@ -1,0 +1,13 @@
+{
+	"require": {
+		"sentry/sentry": "^4.0"
+	},
+	"extra": {
+		"merge-plugin": {
+			"include": [
+				"extensions/*/composer.json",
+				"skins/*/composer.json"
+			]
+		}
+	}
+}
