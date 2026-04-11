@@ -24,7 +24,6 @@ RUN curl -sSL https://github.com/mlocati/docker-php-extension-installer/releases
     @composer
 
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-COPY docker-php.ini /usr/local/etc/php/conf.d
 
 WORKDIR /var/www/html/extensions
 
@@ -102,6 +101,6 @@ USER root
 WORKDIR /var/www/html
 
 COPY composer.local.json .
-RUN COMPOSER_NO_SECURITY_BLOCKING=1 composer update
+RUN composer update
 
 CMD ["php-fpm"]
