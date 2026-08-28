@@ -2,8 +2,24 @@ name: Docker publish
 
 on:
   push:
-    tags:
-      - "v*"
+    branches:
+      - main
+  # Manual rebuild without an empty commit (picks up a new PHP patch on its own).
+  workflow_dispatch:
+
+# The tag number is global state: every run derives it from the tags that already exist, so two
+# runs must never be in flight at once. cancel-in-progress MUST stay false — killing a run
+# mid-flight can leave images pushed to ghcr with no git tag to match them.
+# Note this coalesces: if a third push arrives while one run is queued, the queued one is dropped
+# in favour of the newer commit, which supersedes it anyway.
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+# An explicit block restricts the token to exactly these, so both are required.
+permissions:
+  contents: write # create the vX.YZ-N tag
+  packages: write # push images to ghcr.io
 
 env:
   REGISTRY: ghcr.io
@@ -14,8 +30,38 @@ env:
   MEDIAWIKI_BRANCH: "REL1_43"
 
 jobs:
+  version:
+    name: Compute next version
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.next.outputs.tag }}
+    steps:
+      - name: Find the next v${{ env.MEDIAWIKI_MAJOR_VERSION }}-N tag
+        id: next
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          major="$MEDIAWIKI_MAJOR_VERSION"
+          # Escape the dot, so the filter below cannot match 1x43 as well as 1.43.
+          major_re="${major//./\\.}"
+          # Asking the API rather than reading a checkout: this sees tags created seconds ago by a
+          # previous run, and saves fetching full history just to list refs.
+          latest=$(gh api --paginate \
+            "repos/$GITHUB_REPOSITORY/git/matching-refs/tags/v${major}-" --jq '.[].ref' \
+            | sed 's|^refs/tags/||' \
+            | grep -E "^v${major_re}-[0-9]+$" \
+            | sed -E "s|^v${major_re}-||" \
+            | sort -n | tail -1 || true)
+          # No tags yet for this MediaWiki branch — i.e. the first build after a 1.43 -> 1.44 bump
+          # of MEDIAWIKI_MAJOR_VERSION — restarts the counter at 1.
+          tag="v${major}-$(( ${latest:-0} + 1 ))"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "Next tag: $tag"
+
   build-amd64:
     name: Build amd64
+    needs: version
     runs-on: ubuntu-latest
     services:
       registry:
@@ -46,7 +92,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=ref,event=tag
+            type=raw,value=${{ needs.version.outputs.tag }}
             type=raw,value=latest
 
       - name: Download and modify MediaWiki Dockerfile
@@ -82,6 +128,7 @@ jobs:
 
   build-arm64:
     name: Build arm64
+    needs: version
     runs-on: ubuntu-24.04-arm
     services:
       registry:
@@ -112,7 +159,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=ref,event=tag
+            type=raw,value=${{ needs.version.outputs.tag }}
             type=raw,value=latest
 
       - name: Download and modify MediaWiki Dockerfile
@@ -150,6 +197,7 @@ jobs:
     name: Create and push multi-arch manifest
     runs-on: ubuntu-latest
     needs:
+      - version
       - build-amd64
       - build-arm64
     steps:
@@ -166,7 +214,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=ref,event=tag
+            type=raw,value=${{ needs.version.outputs.tag }}
             type=raw,value=latest
 
       - name: Create and push multi-arch manifest
@@ -176,3 +224,26 @@ jobs:
           sources: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ needs.build-amd64.outputs.digest }}
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ needs.build-arm64.outputs.digest }}
+
+      # Last, so the tag only ever exists for a commit whose image was actually published. A run
+      # that dies before this point creates no tag, so the next run computes the same number and
+      # reuses it — failures leave no gap in the sequence.
+      - name: Tag the published commit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.version.outputs.tag }}
+        run: |
+          set -euo pipefail
+          # Re-running this job after it already succeeded must not fail. Same commit is a no-op;
+          # a different commit means two runs somehow raced for the number, which needs a human.
+          if existing=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" --jq .object.sha 2>/dev/null); then
+            if [ "$existing" = "$GITHUB_SHA" ]; then
+              echo "$TAG already points at $GITHUB_SHA, nothing to do."
+              exit 0
+            fi
+            echo "::error::$TAG already exists on $existing, refusing to move it to $GITHUB_SHA."
+            exit 1
+          fi
+          gh api -X POST "repos/$GITHUB_REPOSITORY/git/refs" \
+            -f ref="refs/tags/$TAG" -f sha="$GITHUB_SHA"
+          echo "Tagged $GITHUB_SHA as $TAG."
