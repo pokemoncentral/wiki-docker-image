@@ -87,7 +87,9 @@ RUN git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediaw
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-TwitterCards.git TwitterCards \
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-UserMerge.git UserMerge \
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-VipsScaler.git VipsScaler \
-    && git clone --depth 1 --recurse-submodules --shallow-submodules -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-VisualEditor.git VisualEditor \
+    # lib/ve is a submodule pinned to gerrit.wikimedia.org, which 403s CI runners; fetch it from the GitHub mirror.
+    && git -c url."https://github.com/wikimedia/VisualEditor.git".insteadOf=https://gerrit.wikimedia.org/r/VisualEditor/VisualEditor.git \
+        clone --depth 1 --recurse-submodules --shallow-submodules -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-VisualEditor.git VisualEditor \
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-Widgets.git Widgets \
     && git clone --depth 1 -b $MEDIAWIKI_BRANCH https://github.com/wikimedia/mediawiki-extensions-WikiEditor.git WikiEditor \
     # non-mediawiki stuff
